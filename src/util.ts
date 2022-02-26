@@ -1,3 +1,5 @@
+import ansiEscapes from 'ansi-escapes';
+
 export const capitalize = (input: string) => {
     const lowercasedStr = input.toLowerCase();
     const words = lowercasedStr.split(' ');
@@ -11,10 +13,6 @@ export const capitalize = (input: string) => {
     return capitalizedWords.join(' ');
 };
 
-export const sleep = (
-    ms: number,
-) => new Promise((res) => {
-    setTimeout(res, ms);
-});
-
-export const clear = () => process.stdout.write('\u001Bc');
+export const clear = () => {
+    process.stdout.write(ansiEscapes.clearTerminal);
+};
