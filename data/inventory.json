@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Paracetamol",
+    "strength": 500,
+    "pack_size": 50,
+    "total_packs": 140
+  },
+  {
+    "name": "Ibuprofen",
+    "strength": 500,
+    "pack_size": 50,
+    "total_packs": 100
+  },
+  {
+    "name": "Amoxicillin",
+    "strength": 250,
+    "pack_size": 20,
+    "total_packs": 20
+  },
+  {
+    "name": "Tramadol",
+    "strength": 50,
+    "pack_size": 100,
+    "total_packs": 5
+  },
+  {
+    "name": "Codeine",
+    "strength": 30,
+    "pack_size": 10,
+    "total_packs": 20
+  },
+  {
+    "name": "Simvastatin",
+    "strength": 10,
+    "pack_size": 10,
+    "total_packs": 10
+  },
+  {
+    "name": "Warfarin",
+    "strength": 3,
+    "pack_size": 50,
+    "total_packs": 5
+  }
+]
