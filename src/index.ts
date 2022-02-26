@@ -23,9 +23,13 @@ type Inventory = InventoryItem[];
 
 let running = true;
 
-const printFormulary = (form: Formulary) => {
+const printFormulary = (
+    form: Formulary,
+    showHeading = true,
+) => {
 
-    let col_width = 0;
+    const heading = 'Formulary';
+    let col_width = heading.length;
     const padding = 2;
 
     // Set column width to length of longest name
@@ -35,33 +39,32 @@ const printFormulary = (form: Formulary) => {
         }
     }
 
-    const heading = 'Formulary';
-
-    if (heading.length > col_width) {
-        col_width = heading.length;
-    }
-
     // Pad column
     col_width += padding;
-    
-    const horizontal_line = `+${'-'.repeat(col_width)}+`;
+
+    const line = `+${'-'.repeat(col_width)}+`;
+    const emptyRow = `| ${'(empty)'.padEnd(col_width - padding)} |`;
 
     const content = form.map((med) => {
         return `| ${med.padEnd(col_width - padding)} |`;
     });
 
     console.log(
-        `\n${
-            horizontal_line
-        }\n${
-            `| ${heading.padEnd(col_width - padding)} |`
-        }\n${
-            horizontal_line
-        }\n${
-            content.join('\n')
-        }\n${
-            horizontal_line
-        }\n`,
+        `${
+            showHeading ? `\n${line}\n${
+                `| ${heading.padEnd(col_width - padding)} |`
+            }` : ''
+        }${
+            `\n${
+                line
+            }\n${
+                content.length > 0
+                ? content.join('\n')
+                : emptyRow
+            }\n${
+                line
+            }\n`
+        }`,
     );
 
 };
@@ -69,44 +72,77 @@ const printFormulary = (form: Formulary) => {
 const printInventory = (inv: Inventory) => {
 
     // index column width temp
-    let iw_temp = 0;
+    const col1Heading = 'Name';
+    const col2Heading = 'Strength (mg)';
+    const col3Heading = 'Pack Size';
+    const col4Heading = 'Total Packs';
+
+    const padding = 2;
+
+    let col1 = col1Heading.length;
+    let col2 = col2Heading.length;
+    let col3 = col3Heading.length;
+    let col4 = col4Heading.length;
 
     for (let i = 0; i < inv.length; i++) {
-        if (inv[i].name.length > iw_temp) {
-            iw_temp = inv[i].name.length;
-        }
+
+        const nameLength = inv[i].name.length;
+        if (nameLength > col1) col1 = nameLength;
+
+        const strLength = String(inv[i].strength).length;
+        if (strLength > col2) col2 = strLength;
+
+        const sizeLength = String(inv[i].pack_size).length;
+        if (sizeLength > col3) col3 = sizeLength;
+
+        const totPackLength = String(inv[i].total_packs).length;
+        if (totPackLength > col4) col4 = totPackLength;
+
     }
 
-    // Repeat alias
-    const r = (num: number) => '-'.repeat(num);
+    const empty = '(empty)';
 
-    const col1 = 'Strength (mg)';
-    const col2 = 'Pack Size';
-    const col3 = 'Total Packs';
+    if (empty.length > col1) col1 = empty.length;
+    if (empty.length > col2) col2 = empty.length;
+    if (empty.length > col3) col3 = empty.length;
+    if (empty.length > col4) col4 = empty.length;
+
+    const emptyRow = `| ${
+        empty.padEnd(col1)
+    } | ${
+        empty.padStart(col2)
+    } | ${
+        empty.padStart(col3)
+    } | ${
+        empty.padStart(col4)
+    } |`;
+
+    // Repeat alias
+    const r = (num: number, str = '-') => str.repeat(num);
 
     // Column widths with one space padding on each side.
-    const iw = iw_temp     + 2;
-    const _1 = col1.length + 2;
-    const _2 = col2.length + 2;
-    const _3 = col3.length + 2;
+    const _1 = col1 + padding;
+    const _2 = col2 + padding;
+    const _3 = col3 + padding;
+    const _4 = col4 + padding;
 
-    const line = `+${r(iw)}+${r(_1)}+${r(_2)}+${r(_3)}+`;
+    const line = `+${r(_1)}+${r(_2)}+${r(_3)}+${r(_4)}+`;
 
     const content = inv.map((med) => {
 
-        const name =   String(med.name);
-        const str =    String(med.strength);
-        const pk_sz =  String(med.pack_size);
+        const name   = String(med.name);
+        const str    = String(med.strength);
+        const pk_sz  = String(med.pack_size);
         const tot_pk = String(med.total_packs);
 
         return `| ${
-            name.padEnd(iw - 2)
+            name.padEnd(col1)
         } | ${
-            str.padStart(col1.length)
+            str.padStart(col2)
         } | ${
-            pk_sz.padStart(col2.length)
+            pk_sz.padStart(col3)
         } | ${
-            tot_pk.padStart(col3.length)
+            tot_pk.padStart(col4)
         } |`;
 
     });
@@ -117,16 +153,62 @@ const printInventory = (inv: Inventory) => {
             line
         }\n${
             // Column headers
-            `|${' '.repeat(iw)}| ${col1} | ${col2} | ${col3} |`
+            `| ${
+                col1Heading.padEnd(col1)
+            } | ${
+                col2Heading.padStart(col2)
+            } | ${
+                col3Heading.padStart(col3)
+            } | ${
+                col4Heading.padStart(col4)
+            } |`
         }\n${
             // Separator
             line
         }\n${
-            content.join('\n')
+            content.length > 0
+            ? content.join('\n')
+            : emptyRow
         }\n${
             line
         }\n`
     );
+
+};
+
+const validPositiveWholeNumber = (
+    user_input: string | number,
+) => {
+    const input = String(user_input);
+    const blacklistRegex = /[^0-9]/;
+    const matches = input.trim().match(blacklistRegex);
+    if (matches) return false;
+
+    const num = parseInt(input.trim(), 10);
+    if (num < 1) return false;
+
+    return true;
+};
+
+const confirm = async (
+    msg: string,
+    yay?: () => Promise<void> | void,
+    nay?: () => Promise<void> | void,
+) => {
+
+    const confirmation = await inquirer.prompt<{
+        confirmed: boolean;
+    }>({
+        type: 'confirm',
+        name: 'confirmed',
+        message: msg,
+    });
+
+    if (confirmation['confirmed'] === true) {
+        yay ? await yay() : null;
+    } else {
+        nay ? await nay() : null;
+    }
 
 };
 
@@ -148,7 +230,11 @@ const formularyValidator = (data: any): data is Formulary => {
     return true;
 };
 
-const inventoryValidator = (data: any): data is Inventory => {
+const inventoryValidator = (
+    form: Formulary,
+) => (
+    data: any,
+): data is Inventory => {
 
     if (!data) return false;
     // data exists
@@ -170,8 +256,18 @@ const inventoryValidator = (data: any): data is Inventory => {
         if (!str   || typeof str   !== 'number') return false;
         if (!total || typeof total !== 'number') return false;
 
+        if ( !form.includes(name) ) return false;
+
+        if (
+            !validPositiveWholeNumber(size)
+            || !validPositiveWholeNumber(str)
+            || !validPositiveWholeNumber(total)
+        ) {
+            return false;
+        }
+
     }
-    // data is an array of inventory objects
+    // data is an array of valid inventory objects
 
     return true;
 
@@ -239,7 +335,7 @@ const manageFormulary = (
 
     const msgs = {
         initial: 'Enter medication name (or "q" to go back):',
-        confirm: 'Add medications below into formulary?',
+        confirm: 'Add medications above into formulary?',
         quit: 'Continue adding medication?',
     };
 
@@ -325,35 +421,20 @@ const manageFormulary = (
             return !formulary.includes(med); // Sanity check
         });
 
-        const confirmation = await inquirer.prompt<{
-            confirmed: boolean;
-        }>({
-            type: 'confirm',
-            name: 'confirmed',
-            message: `${msgs['confirm']}\n${
-                deduped.map(med => `  "${med}"`).join('\n')
-            }\n `
-        });
+        printFormulary(deduped, false);
 
-        if (confirmation['confirmed'] === true) {
-            formulary.push(...meds);
-            await fsprom.writeFile(
-                './data/formulary.json',
-                JSON.stringify(formulary, null, 2),
-            );
-        }
+        await confirm(msgs['confirm'], async () => {
+                formulary.push(...meds);
+                await fsprom.writeFile(
+                    './data/formulary.json',
+                    JSON.stringify(formulary, null, 2),
+                );
+            },
+        );
 
-        const quit = await inquirer.prompt<{
-            confirmed: boolean;
-        }>({
-            type: 'confirm',
-            name: 'confirmed',
-            message: msgs['quit'],
-        });
-
-        if (quit['confirmed'] === false) {
+        await confirm(msgs['quit'], void 0, () => {
             control.action_running = false;
-        }
+        });
 
     } catch (error) {
         throw error;
@@ -371,17 +452,9 @@ const reportFormulary = (
         clear();
         printFormulary(formulary);
 
-        const quit = await inquirer.prompt<{
-            confirmed: boolean;
-        }>({
-            type: 'confirm',
-            name: 'confirmed',
-            message: 'Go Back?',
-        });
-
-        if (quit['confirmed'] === true) {
+        await confirm('Go Back?', () => {
             control.action_running = false;
-        }
+        });
 
     } catch (error) {
         throw error;
@@ -412,23 +485,17 @@ const manageInventory = (
         empty: 'Medication name cannot be empty.',
         medNameRegex: 'Only letters allowed. E.g. Paracetamol',
         notFound: 'Only medication from formulary allowed.',
-        numErrMsg: 'Only 1 positive whole number. E.g. 100',
+        numErrMsg: [
+            'Only 1 positive whole number greater than 0.',
+            'E.g. 100, 25, 1, 999 etc.',
+        ].join(' '),
     };
 
     type Props = keyof Omit<InventoryItem, 'name'>;
 
-    const validateNumber = (
-        prop: Props,
-    ) => (
-        user_input: string,
-    ) => {
-        const blacklistRegex = /[^0-9]/;
-        const matches = user_input.trim().match(blacklistRegex);
-        if (matches) return errMsgs['numErrMsg'];
-
-        const input = parseInt(user_input.trim(), 10);
-        if (input < 1) return errMsgs['numErrMsg'];
-
+    const validateNumber = (input: string) => {
+        const valid = validPositiveWholeNumber(input);
+        if (!valid) return errMsgs['numErrMsg'];
         return true;
     };
 
@@ -484,19 +551,19 @@ const manageInventory = (
                 type: 'input',
                 name: 'strength',
                 message: msgs['strength'],
-                validate: validateNumber('strength'),
+                validate: validateNumber,
             },
             {
                 type: 'input',
                 name: 'pack_size',
                 message: msgs['pack_size'],
-                validate: validateNumber('pack_size'),
+                validate: validateNumber,
             },
             {
                 type: 'input',
                 name: 'total_packs',
                 message: msgs['total_packs'],
-                validate: validateNumber('total_packs'),
+                validate: validateNumber,
             },
         ], { name: nameQuit.name });
 
@@ -509,27 +576,9 @@ const manageInventory = (
             total_packs: parseInt(pack.total_packs),
         };
 
-        const displayItem = {
-            [newItem.name]: {
-                'Strength (mg)': newItem.strength,
-                'Pack size': newItem.pack_size,
-                'Number of packs': newItem.total_packs,
-            },
-        };
+        printInventory([newItem]);
 
-        console.log('\n');
-        console.table(displayItem);
-        console.log('\n');
-
-        const confirmation = await inquirer.prompt<{
-            confirmed: boolean;
-        }>({
-            type: 'confirm',
-            name: 'confirmed',
-            message: msgs['confirm'],
-        });
-
-        if (confirmation['confirmed'] === true) {
+        await confirm(msgs['confirm'], async () => {
 
             const itemIndex = inventory.findIndex((item) => {
                 return (
@@ -547,27 +596,16 @@ const manageInventory = (
                 ].total_packs += newItem.total_packs;
             }
 
-            console.log(inventory);
-            await new Promise((res) => setTimeout(res, 2000));
-
             await fsprom.writeFile(
                 './data/inventory.json',
                 JSON.stringify(inventory, null, 2),
             );
 
-        }
-
-        const quit = await inquirer.prompt<{
-            confirmed: boolean;
-        }>({
-            type: 'confirm',
-            name: 'confirmed',
-            message: msgs['quit'],
         });
 
-        if (quit['confirmed'] === false) {
+        await confirm(msgs['quit'], undefined, () => {
             control.action_running = false;
-        }
+        });
 
     } catch (error) {
         throw error;
@@ -581,45 +619,14 @@ const reportInventory = (
     control: ActionLoopControl,
 ) => {
 
-    type DisplayItem = {
-        // name?: string;
-        'Strength (mg)': number;
-        'Pack Size': number;
-        'Total Packs': number;
-    };
-
-    type InventoryDict = Record<string, DisplayItem>;
-
-    const data: InventoryDict = inventory.reduce((agg, med) => {
-
-        agg[med.name] = {
-            'Strength (mg)': med.strength,
-            'Pack Size': med.pack_size,
-            'Total Packs': med.total_packs,
-        };
-
-        return agg;
-
-    }, {} as InventoryDict);
-
     try {
 
         clear();
-
-        // console.table(data);
         printInventory(inventory);
 
-        const quit = await inquirer.prompt<{
-            confirmed: boolean;
-        }>({
-            type: 'confirm',
-            name: 'confirmed',
-            message: 'Go Back?',
-        });
-
-        if (quit['confirmed'] === true) {
+        await confirm('Go Back?', () => {
             control.action_running = false;
-        }
+        });
 
     } catch (error) {
         throw error;
@@ -699,7 +706,7 @@ const main = async (
 
         const inventory = await loadData<Inventory[0]>(
             'data/inventory.json',
-            inventoryValidator,
+            inventoryValidator(formulary),
         ) as Inventory;
 
         while (running) {
