@@ -23,6 +23,49 @@ type Inventory = InventoryItem[];
 
 let running = true;
 
+const printFormulary = (form: Formulary) => {
+
+    let col_width = 0;
+    const padding = 2;
+
+    // Set column width to length of longest name
+    for (let i = 0; i < form.length; i++) {
+        if (form[i].length > col_width) {
+            col_width = form[i].length;
+        }
+    }
+
+    const heading = 'Formulary';
+
+    if (heading.length > col_width) {
+        col_width = heading.length;
+    }
+
+    // Pad column
+    col_width += padding;
+    
+    const horizontal_line = `+${'-'.repeat(col_width)}+`;
+
+    const content = form.map((med) => {
+        return `| ${med.padEnd(col_width - padding)} |`;
+    });
+
+    console.log(
+        `\n${
+            horizontal_line
+        }\n${
+            `| ${heading.padEnd(col_width - padding)} |`
+        }\n${
+            horizontal_line
+        }\n${
+            content.join('\n')
+        }\n${
+            horizontal_line
+        }\n`,
+    );
+
+};
+
 const printInventory = (inv: Inventory) => {
 
     // index column width temp
@@ -326,7 +369,7 @@ const reportFormulary = (
     try {
 
         clear();
-        console.table(formulary);
+        printFormulary(formulary);
 
         const quit = await inquirer.prompt<{
             confirmed: boolean;
