@@ -24,9 +24,14 @@ JSON file `formulary.json` or create it if it doesn't exist.
 
 - [x] Read existing inventory from local JSON file
 `inventory.json` or create it if it doesn't exist.
-- [ ] Add packs of medications to inventory.
-  - [ ] Only allow medications in formulary to be added.
-- [ ] Generate report of medications in inventory.
+- [x] Add packs of medications to inventory.
+  - [x] Only allow medications in formulary to be added.
+  - [x] Handle erroneous input. E.g. -10, 2e-3, 0.02 etc.
+  - [x] Write inventory to local `inventory.json` file.
+- [x] Generate report of medications in inventory.
+  - [x] Print out a list of all the medications in the inventory
+  with the total number of packs for each combination of
+  medicine, strength and pack size.
 
 ## Roadmap
 

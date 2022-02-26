@@ -40,5 +40,11 @@
     "strength": 3,
     "pack_size": 50,
     "total_packs": 5
+  },
+  {
+    "name": "Paracetamol",
+    "strength": 500,
+    "pack_size": 25,
+    "total_packs": 100
   }
 ]
