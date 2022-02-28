@@ -32,11 +32,18 @@ const printFormulary = (
     let col_width = heading.length;
     const padding = 2;
 
+    if (form)
+
     // Set column width to length of longest name
     for (let i = 0; i < form.length; i++) {
-        if (form[i].length > col_width) {
-            col_width = form[i].length;
+        const med = form[i];
+
+        if (!med) continue;
+
+        if (med.length > col_width) {
+            col_width = med.length;
         }
+
     }
 
     // Pad column
@@ -88,16 +95,20 @@ const printInventory = (inv: Inventory) => {
 
     for (let i = 0; i < inv.length; i++) {
 
-        const nameLength = inv[i].name.length;
+        const item = inv[i];
+
+        if (!item) continue;
+
+        const nameLength = item.name.length;
         if (nameLength > col1) col1 = nameLength;
 
-        const strLength = String(inv[i].strength).length;
+        const strLength = String(item.strength).length;
         if (strLength > col2) col2 = strLength;
 
-        const sizeLength = String(inv[i].pack_size).length;
+        const sizeLength = String(item.pack_size).length;
         if (sizeLength > col3) col3 = sizeLength;
 
-        const totPackLength = String(inv[i].total_packs).length;
+        const totPackLength = String(item.total_packs).length;
         if (totPackLength > col4) col4 = totPackLength;
 
     }
@@ -285,7 +296,6 @@ const loadFile = async (filename: string) => {
         const err = new Error(
             `Malformed JSON in './${filename}' file.`,
         );
-        err.stack = undefined;
         throw err;
     }
 }
@@ -305,7 +315,6 @@ const loadData = async <T>(
             const error = new Error(
                 `Invalid '${filepath}' file.`,
             );
-            error.stack = undefined;
 
             throw error;
         }
@@ -493,8 +502,6 @@ const manageInventory = (
         ].join(' '),
     };
 
-    type Props = keyof Omit<InventoryItem, 'name'>;
-
     const validateNumber = (input: string) => {
         const valid = validPositiveWholeNumber(input);
         if (!valid) return errMsgs['numErrMsg'];
@@ -593,9 +600,9 @@ const manageInventory = (
             if (itemIndex === -1) {
                 inventory.push(newItem);
             } else {
-                inventory[
-                    itemIndex
-                ].total_packs += newItem.total_packs;
+                const item = inventory[itemIndex];
+                if (!item) return;
+                item.total_packs += newItem.total_packs;
             }
 
             await fsprom.writeFile(
@@ -650,8 +657,16 @@ const main = async (
     inventory: Inventory,
 ) => {
 
+    type Actions = (
+        'Add Medication To Formulary'
+        | 'Generate Formulary Report'
+        | 'Add Medication To Inventory'
+        | 'Generate Inventory Report'
+        | 'Quit'
+    );
+
     const actions: Record<
-        string,
+        Actions,
         (control: ActionLoopControl) => Promise<void>
     > = {
         'Add Medication To Formulary': manageFormulary(
@@ -673,7 +688,7 @@ const main = async (
     try {
 
         const answers = await inquirer.prompt<{
-            action_choice: string;
+            action_choice: Actions;
         }>([{
             type: 'list',
             name: 'action_choice',
