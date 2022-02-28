@@ -42,8 +42,8 @@ Clone the repository with and run `npm install`.
 Transpile the app from TypeScript to JavaScript using
 `npm run build`. The output will be in the `build/` folder.
 
-You can run `npm run build:watch` during development to type
-check on save.
+You can run `npm run build:watch` during development to
+type-check on save.
 
 ## Usage
 
@@ -78,4 +78,5 @@ decided not to implement it.
 
 - [ ] Upgrade the database to a local SQLite / remote PostgreSQL
 database and use Prisma as an ORM.
-- [ ] Build a ReST API that can act as a backend for the CLI.
+- [ ] Build a ReST API that can act as a backend for the command
+line application.
