@@ -33,8 +33,49 @@ JSON file `formulary.json` or create it if it doesn't exist.
   with the total number of packs for each combination of
   medicine, strength and pack size.
 
+## Installation
+
+Clone the repository with and run `npm install`.
+
+## Build
+
+Transpile the app from TypeScript to JavaScript using
+`npm run build`. The output will be in the `build/` folder.
+
+You can run `npm run build:watch` during development to type
+check on save.
+
+## Usage
+
+You can run the app using `npm run start`.
+
+> **NOTE**: There is no nodemon version of this command for
+development. I tried it out and it would mess up the `inquirer`
+prompts.
+
+Upon running the app you will be presented with the following
+options:
+
+- `Add Medication To Formulary`
+- `Generate Formulary Report`
+- `Add Medication To Inventory`
+- `Generate Inventory Report`
+- `Quit`
+
+You can quit the app using CTRL+C but the option to quit is
+still there for a more complete interface.
+
+> **TIP**: When presented with any kind of confirmation prompt
+you can just press ENTER instead of typing `y / Y` and inquirer
+will accept that as a yes. You will have to type `n / N` for no
+though.
+
 ## Roadmap
+
+I think the following features would be good to have but for the
+sake of keeping things simple and the data source local I've
+decided not to implement it.
 
 - [ ] Upgrade the database to a local SQLite / remote PostgreSQL
 database and use Prisma as an ORM.
-- [ ] Build a web server that can act as a backend for the CLI.
+- [ ] Build a ReST API that can act as a backend for the CLI.
