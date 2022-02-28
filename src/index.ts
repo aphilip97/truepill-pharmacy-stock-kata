@@ -43,7 +43,9 @@ const printFormulary = (
     col_width += padding;
 
     const line = `+${'-'.repeat(col_width)}+`;
-    const emptyRow = `| ${'(empty)'.padEnd(col_width - padding)} |`;
+    const emptyRow = `| ${
+        '(empty)'.padEnd(col_width - padding)
+    } |`;
 
     const content = form.map((med) => {
         return `| ${med.padEnd(col_width - padding)} |`;
@@ -316,7 +318,7 @@ const loadData = async <T>(
             `'${filepath}' file does not exist. Creating...`
         );
 
-        fsprom.writeFile(
+        await fsprom.writeFile(
             `${filepath}`,
             JSON.stringify([], null, 2),
         );
